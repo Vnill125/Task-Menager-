@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { RxDragHandleDots2 } from "react-icons/rx";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 type Task = {
   id: string;
@@ -11,7 +11,6 @@ type Task = {
 
 type Props = {
   task: Task;
-  dragHandleProps?: any;
   onDelete?: () => void;
   onUpdate?: (newContent: string) => void;
   isDragging?: boolean;
@@ -19,18 +18,12 @@ type Props = {
 
 export default function TaskCard({
   task,
-  dragHandleProps,
   onDelete,
   onUpdate,
   isDragging,
 }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(task.content);
-
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    onDelete && onDelete();
-  };
 
   const handleSave = async () => {
     const trimmed = value.trim();
@@ -39,66 +32,56 @@ export default function TaskCard({
       setIsEditing(false);
       return;
     }
-    if (trimmed === task.content) {
-      setIsEditing(false);
-      return;
+    if (trimmed !== task.content) {
+      onUpdate && (await onUpdate(trimmed));
     }
-    onUpdate && (await onUpdate(trimmed));
     setIsEditing(false);
   };
 
   return (
-    <div
-      className={`p-4 rounded-xl shadow-md flex items-center gap-3 transition text-lg
-        ${
-          isDragging
-            ? "bg-blue-600 text-white scale-105"
-            : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-        }`}
+    <motion.div
+      layout // płynne animacje pozycji
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: isDragging ? 1.05 : 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className={`p-4 rounded-xl bg-gray-800 border border-gray-700 shadow-md text-gray-100
+  ${isDragging ? "ring-2 ring-blue-500 scale-105 shadow-lg" : "hover:scale-[1.02] hover:shadow-lg"}
+  transition-transform transition-shadow duration-300 ease-in-out cursor-grab`}
     >
-      {/* Drag handle */}
-      <button
-        {...(dragHandleProps || {})}
-        aria-label="Drag handle"
-        className="p-1 rounded cursor-grab text-gray-600 hover:text-black"
-      >
-        <RxDragHandleDots2 size={22} />
-      </button>
+      <div className="flex justify-between items-start gap-3">
+        {isEditing ? (
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleSave}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSave();
+              if (e.key === "Escape") {
+                setValue(task.content);
+                setIsEditing(false);
+              }
+            }}
+            autoFocus
+            className="flex-1 px-2 py-1 rounded bg-gray-700 border border-gray-600 text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        ) : (
+          <p
+            className="flex-1 text-sm leading-relaxed cursor-pointer select-none"
+            onDoubleClick={() => setIsEditing(true)}
+            title="Double-click to edit"
+          >
+            {task.content}
+          </p>
+        )}
 
-      {/* Content / Edit */}
-      {isEditing ? (
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={handleSave}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSave();
-            if (e.key === "Escape") {
-              setValue(task.content);
-              setIsEditing(false);
-            }
-          }}
-          autoFocus
-          className="flex-1 p-2 rounded bg-white text-gray-900 border border-gray-300 text-lg"
-        />
-      ) : (
-        <div
-          className="flex-1 select-none cursor-pointer"
-          onDoubleClick={() => setIsEditing(true)}
-          title="Double-click to edit"
+        <button
+          onClick={onDelete}
+          className="text-red-400 hover:text-red-500 text-sm transition"
         >
-          {task.content}
-        </div>
-      )}
-
-      {/* Delete */}
-      <button
-        type="button"
-        onClick={handleDelete}
-        className="ml-2 text-xl text-red-500 hover:text-red-700"
-      >
-        ❌
-      </button>
-    </div>
+          ✕
+        </button>
+      </div>
+    </motion.div>
   );
 }

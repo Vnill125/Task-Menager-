@@ -12,6 +12,7 @@ import TaskCard from "./TaskCard";
 import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { FiSearch } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 type Column = { id: string; title: string; accent: string };
 
@@ -50,9 +51,14 @@ export default function Board() {
   };
 
   return (
-    <div className="min-h-[90vh] max-w-8xl mx-auto bg-gradient-to-br from-gray-950 to-gray-900 text-gray-100 p-8 rounded-2xl shadow-lg">
+    <div className="min-h-[90vh] max-w-7xl mx-auto bg-gradient-to-br from-gray-950 to-gray-900 text-gray-100 p-8 rounded-2xl shadow-xl">
       {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-6"
+      >
         <div>
           <h1 className="text-4xl font-bold tracking-wide">🎯 Kanban Board</h1>
           <p className="text-gray-400 text-lg mt-1">
@@ -60,7 +66,7 @@ export default function Board() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {/* Search */}
           <div className="relative">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -73,37 +79,52 @@ export default function Board() {
           </div>
 
           {/* Sign Out */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => signOut(auth)}
             className="px-5 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition shadow"
           >
             Sign Out
-          </button>
+          </motion.button>
         </div>
-      </header>
+      </motion.header>
 
       {/* Add task form */}
-      <form onSubmit={handleAdd} className="flex gap-3 mb-8">
+      <motion.form
+        onSubmit={handleAdd}
+        className="flex gap-3 mb-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Add new task..."
           className="flex-1 p-4 rounded-xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button className="px-6 py-3 bg-blue-600 rounded-xl text-white text-lg hover:bg-blue-700 transition shadow">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-6 py-3 bg-blue-600 rounded-xl text-white text-lg hover:bg-blue-700 transition shadow"
+        >
           Add
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
 
       {/* Columns */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {columns.map((col) => {
+          {columns.map((col, idx) => {
             const colTasks = filteredTasks.filter((t) => t.status === col.id);
             return (
-              <div
+              <motion.div
                 key={col.id}
-                className={`rounded-2xl p-5 min-h-[500px] bg-gradient-to-b from-gray-900 to-gray-800 border ${col.accent} border-opacity-40 shadow-lg`}
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className={`rounded-2xl p-5 min-h-[500px] bg-gradient-to-b from-gray-900 to-gray-800 border ${col.accent} border-opacity-40 shadow-lg flex flex-col`}
               >
                 {/* Column Header */}
                 <div className="flex items-center justify-between mb-5">
@@ -115,13 +136,13 @@ export default function Board() {
                   </span>
                 </div>
 
-                {/* Droppable ONLY around tasks list */}
+                {/* Droppable list */}
                 <Droppable droppableId={col.id}>
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="flex flex-col gap-3"
+                      className="flex flex-col gap-3 flex-1"
                     >
                       {colTasks.length === 0 && (
                         <div className="text-sm text-gray-500 italic">
@@ -157,14 +178,14 @@ export default function Board() {
                     </div>
                   )}
                 </Droppable>
-              </div>
+              </motion.div>
             );
           })}
         </div>
       </DragDropContext>
 
       {/* Footer */}
-      <footer className="mt-10 text-center text-gray-500 text-sm">
+      <footer className="mt-12 text-center text-gray-500 text-sm">
         Made with ❤️ for productivity
       </footer>
     </div>
