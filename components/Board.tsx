@@ -11,7 +11,7 @@ import { useTasks, Task } from "../hooks/useTasks";
 import TaskCard from "./TaskCard";
 import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
-import { FiSearch, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 
 type Column = { id: string; title: string; accent: string };
 
@@ -51,7 +51,6 @@ export default function Board() {
 
   return (
     <div className="min-h-[90vh] max-w-8xl mx-auto bg-gradient-to-br from-gray-950 to-gray-900 text-gray-100 p-8 rounded-2xl shadow-lg">
-
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
@@ -102,25 +101,28 @@ export default function Board() {
           {columns.map((col) => {
             const colTasks = filteredTasks.filter((t) => t.status === col.id);
             return (
-              <Droppable key={col.id} droppableId={col.id}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className={`rounded-2xl p-5 min-h-[500px] bg-gradient-to-b from-gray-900 to-gray-800 border ${col.accent} border-opacity-40 shadow-lg`}
-                  >
-                    {/* Column Header */}
-                    <div className="flex items-center justify-between mb-5">
-                      <h2 className="text-xl font-semibold flex items-center gap-2">
-                        {col.title}
-                      </h2>
-                      <span className="bg-white text-gray-900 rounded-full px-3 py-1 text-xs font-bold shadow">
-                        {colTasks.length}
-                      </span>
-                    </div>
+              <div
+                key={col.id}
+                className={`rounded-2xl p-5 min-h-[500px] bg-gradient-to-b from-gray-900 to-gray-800 border ${col.accent} border-opacity-40 shadow-lg`}
+              >
+                {/* Column Header */}
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-xl font-semibold flex items-center gap-2">
+                    {col.title}
+                  </h2>
+                  <span className="bg-white text-gray-900 rounded-full px-3 py-1 text-xs font-bold shadow">
+                    {colTasks.length}
+                  </span>
+                </div>
 
-                    {/* Tasks */}
-                    <div className="flex flex-col gap-3">
+                {/* Droppable ONLY around tasks list */}
+                <Droppable droppableId={col.id}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="flex flex-col gap-3"
+                    >
                       {colTasks.length === 0 && (
                         <div className="text-sm text-gray-500 italic">
                           No tasks
@@ -136,11 +138,11 @@ export default function Board() {
                             <div
                               ref={providedDraggable.innerRef}
                               {...providedDraggable.draggableProps}
+                              {...providedDraggable.dragHandleProps}
                               style={providedDraggable.draggableProps.style}
                             >
                               <TaskCard
                                 task={task}
-                                dragHandleProps={providedDraggable.dragHandleProps}
                                 onDelete={() => deleteTask(task.id)}
                                 onUpdate={(newContent) =>
                                   updateTaskContent(task.id, newContent)
@@ -153,13 +155,14 @@ export default function Board() {
                       ))}
                       {provided.placeholder}
                     </div>
-                  </div>
-                )}
-              </Droppable>
+                  )}
+                </Droppable>
+              </div>
             );
           })}
         </div>
       </DragDropContext>
+
       {/* Footer */}
       <footer className="mt-10 text-center text-gray-500 text-sm">
         Made with ❤️ for productivity
