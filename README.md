@@ -3,7 +3,7 @@
 A modern task management web app with drag-and-drop functionality, authentication, and Firestore integration.
 Built with **TypeScript, Next.js, Tailwind CSS, Firebase, and React**, designed with a **dark theme UI** and smooth interactions.
 
-🚀 **Live Demo**: [...](https://task-menager-eosin.vercel.app/)
+🚀 **Live Demo**: [https://task-menager-eosin.vercel.app/](https://task-menager-eosin.vercel.app/)
 
 ---
 
