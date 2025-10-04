@@ -24,8 +24,8 @@ Built with **TypeScript, Next.js, Tailwind CSS, Firebase, and React**, designed 
 
 ### Board View
 
-<img width="2880" height="1800" alt="task-menager-eosin vercel app_" src="https://github.com/user-attachments/assets/5a963de4-3869-4ea1-a1e2-75b0fb863a1b" />
 <img width="1902" height="949" alt="image" src="https://github.com/user-attachments/assets/f52c0ad2-edf3-4258-8456-e76dab1987ae" />
+<img width="2880" height="1800" alt="task-menager-eosin vercel app_" src="https://github.com/user-attachments/assets/5a963de4-3869-4ea1-a1e2-75b0fb863a1b" />
 
 ---
 
