@@ -40,7 +40,7 @@ export default function TaskCard({
 
   return (
     <motion.div
-      layout // płynne animacje pozycji
+      layout 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: isDragging ? 1.05 : 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
