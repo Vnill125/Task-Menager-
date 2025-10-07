@@ -68,14 +68,12 @@ export function useTasks() {
     
   };
 
-  // zmienia tylko status (kolumnę)
   const updateTask = async (id: string, status: Task["status"]) => {
     if (!user) return;
     const docRef = doc(db, "boards", user.uid, "tasks", id);
     await updateDoc(docRef, { status });
   };
 
-  // aktualizuje treść zadania
   const updateTaskContent = async (id: string, content: string) => {
     if (!user) return;
     const docRef = doc(db, "boards", user.uid, "tasks", id);
